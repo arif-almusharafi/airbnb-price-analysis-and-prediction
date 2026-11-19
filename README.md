@@ -43,6 +43,24 @@ Important fields include location, room type, price, minimum nights, reviews, ho
 
 ![Regression model R-squared comparison](regression_r2_barplot.png)
 
+## Models and Results
+
+Five regression algorithms were trained and compared on the same data.
+
+- **Split:** 70% training / 30% testing (`test_size=0.3`, `random_state=42`)
+- **Target:** `log1p(price)`, so MAE and RMSE below are on the log scale, not in dollars
+- **Settings:** scikit-learn default settings, except KNN (`n_neighbors=15`). Features were not scaled.
+
+| Algorithm | Type | MAE | RMSE | R² |
+|---|---|---|---|---|
+| Linear Regression | Linear model | 0.338 | 0.455 | 0.527 |
+| **Random Forest Regressor** | Ensemble (many decision trees, averaged) | **0.293** | **0.405** | **0.625** |
+| Gradient Boosting Regressor | Ensemble (decision trees built one after another) | 0.304 | 0.415 | 0.606 |
+| K-Nearest Neighbors (k=15) | Distance-based | 0.530 | 0.672 | -0.033 |
+| Support Vector Regression (SVR) | Support vector machine | 0.522 | 0.658 | 0.010 |
+
+**Best model:** Random Forest, with an R² of 0.625 on the test set and the lowest errors. Gradient Boosting was close behind (R² 0.606), and Linear Regression reached 0.527. KNN and SVR performed poorly on this data.
+
 ## Tools & Technologies
 
 - Python
