@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYC Airbnb Price Analysis and Prediction | Arif Al-Musharafi</title>
+  <meta name="description" content="A data science project on 48,895 New York Airbnb listings from 2019: data cleaning, five regression models, honest before and after results, and a live price predictor.">
+  <meta name="author" content="Arif Al-Musharafi">
+  <meta name="theme-color" content="#faf8f5">
+
+  <!-- Link preview for LinkedIn and others (F12).
+       LinkedIn needs a full URL for og:image and og:url. If the GitHub Pages
+       address is different, change the two URLs below. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NYC Airbnb Price Analysis and Prediction">
+  <meta property="og:description" content="48,895 New York listings, five regression models, honest before and after results, and a live nightly price predictor.">
+  <meta property="og:url" content="https://arif-almusharafi.github.io/airbnb-price-analysis-and-prediction/">
+  <meta property="og:image" content="https://arif-almusharafi.github.io/airbnb-price-analysis-and-prediction/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta property="og:image:alt" content="NYC Airbnb Price Analysis and Prediction by Arif Al-Musharafi">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/results.css">
+  <link rel="stylesheet" href="css/predictor.css">
+</head>
+<body>
+  <!-- Icon sprite (stroke icons, 24x24). Used with <svg><use href="#icon-..."></svg>. -->
+  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="icon-logo" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="m7 17 3.5-3.5 2.5 2 4-4.5"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.7-6L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.7 6L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="icon-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="icon-expand" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <svg class="icon brand-icon" aria-hidden="true" focusable="false"><use href="#icon-logo"/></svg>
+        <span>NYC Airbnb Prices</span>
+      </a>
+      <nav aria-label="Main">
+        <ul class="nav-list">
+          <li class="nav-optional"><a href="#results">Results</a></li>
+          <li><a class="nav-cta" href="#predictor">Predictor</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- Hero -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow">Data science project &middot; New York City &middot; 2019</p>
+          <h1 id="hero-title">Airbnb Price Analysis and Prediction</h1>
+          <p class="hero-lead">What makes one New York listing cost more than another? I explored 48,895 Airbnb listings, cleaned the data, and trained five regression models to estimate the nightly price.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="#predictor">
+              Try the predictor
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"/></svg>
+            </a>
+            <a class="button button-secondary" href="https://github.com/arif-almusharafi/airbnb-price-analysis-and-prediction" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-github"/></svg>
+              View on GitHub
+              <span class="visually-hidden">(opens in a new tab)</span>
+            </a>
+          </div>
+        </div>
+
+        <dl class="hero-facts" aria-label="Project in numbers">
+          <div class="fact"><dt>Listings</dt><dd class="num">48,895</dd></div>
+          <div class="fact"><dt>Boroughs</dt><dd class="num">5</dd></div>
+          <div class="fact"><dt>Models compared</dt><dd class="num">5</dd></div>
+          <div class="fact"><dt>Price data from</dt><dd class="num">2019</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 01 Goal -->
+    <section class="section" id="goal" aria-labelledby="goal-title">
+      <div class="container narrow">
+        <p class="section-number">01</p>
+        <h2 id="goal-title">The goal</h2>
+        <p>Airbnb prices depend on location, room type, availability, reviews, and more. This project asks which of these matter, and how well a model can predict a fair nightly price from them. In short, the project sets out to:</p>
+        <ul class="tick-list">
+          <li>Explore the factors linked to listing prices.</li>
+          <li>Find patterns across the five boroughs and the room types.</li>
+          <li>Prepare categorical and numerical data for machine learning.</li>
+          <li>Train and compare five regression models.</li>
+          <li>Measure them with standard regression metrics (MAE, RMSE, R²).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 02 Dataset -->
+    <section class="section section-alt" id="dataset" aria-labelledby="dataset-title">
+      <div class="container">
+        <div class="narrow">
+          <p class="section-number">02</p>
+          <h2 id="dataset-title">The dataset</h2>
+          <p>The public <strong>AB_NYC_2019</strong> dataset lists New York City Airbnb homes with their location, room type, nightly price, minimum stay, reviews, host listing count, and yearly availability.</p>
+        </div>
+
+        <ul class="stat-grid" aria-label="Dataset size at each step">
+          <li class="stat-card"><span class="stat-value num">48,895</span><span class="stat-label">rows and 16 columns in the original file</span></li>
+          <li class="stat-card"><span class="stat-value num">38,821</span><span class="stat-label">rows after removing missing values</span></li>
+          <li class="stat-card"><span class="stat-value num">38,806</span><span class="stat-label">rows after removing 15 extreme outliers</span></li>
+          <li class="stat-card"><span class="stat-value num">14</span><span class="stat-label">model features after one-hot encoding</span></li>
+        </ul>
+
+        <div class="narrow">
+          <h3>What the models learn from</h3>
+          <p>Borough, room type, latitude and longitude, minimum nights, number of reviews, the host's number of listings, and days available per year. Names, host details, and the listing id are left out because they do not describe the home.</p>
+          <h3>What they predict</h3>
+          <p>The nightly price in US dollars. A few listings cost up to $10,000, so the models learn <code>log1p(price)</code>, which keeps those rare listings from dominating. The predictor turns the answer back into dollars.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 Workflow -->
+    <section class="section" id="workflow" aria-labelledby="workflow-title">
+      <div class="container narrow">
+        <p class="section-number">03</p>
+        <h2 id="workflow-title">How I worked</h2>
+        <ol class="steps">
+          <li><strong>Load and inspect the dataset.</strong> <span>Columns, types, and first rows.</span></li>
+          <li><strong>Check missing values and duplicates.</strong> <span>No duplicates; rows with missing values were dropped.</span></li>
+          <li><strong>Remove identifiers and non-predictive columns.</strong> <span>Names, host details, and text dates.</span></li>
+          <li><strong>Explore distributions and relationships.</strong> <span>Scatter plots, box plots, and a correlation matrix.</span></li>
+          <li><strong>Encode categorical features.</strong> <span>One-hot encoding for borough and room type.</span></li>
+          <li><strong>Split into training and test sets.</strong> <span>70% to train, 30% to test, with a fixed random seed.</span></li>
+          <li><strong>Train multiple regression models.</strong> <span>Linear Regression, Random Forest, K-Nearest Neighbors, Gradient Boosting, and SVR.</span></li>
+          <li><strong>Compare their performance.</strong> <span>MAE, RMSE, and R² on the same test set.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 04 Charts -->
+    <section class="section section-alt" id="charts" aria-labelledby="charts-title">
+      <div class="container">
+        <div class="narrow">
+          <p class="section-number">04</p>
+          <h2 id="charts-title">What the data shows</h2>
+          <p>A few charts from the notebook's exploration. Prices are in US dollars per night.</p>
+        </div>
+
+        <div class="chart-grid">
+          <figure class="figure">
+            <a class="figure-link" href="assets/charts/nyc-boroughs.jpg" target="_blank" rel="noopener">
+              <img src="assets/charts/nyc-boroughs.jpg" width="1326" height="1291" loading="lazy" decoding="async"
+                   alt="Gray map of New York City showing the outlines of its five boroughs and their neighborhoods.">
+              <span class="figure-open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-expand"/></svg>Open full size<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+            <figcaption>The five boroughs in the data: Manhattan, Brooklyn, Queens, the Bronx, and Staten Island.</figcaption>
+          </figure>
+
+          <figure class="figure">
+            <a class="figure-link" href="assets/charts/price-by-room-type.png" target="_blank" rel="noopener">
+              <img src="assets/charts/price-by-room-type.png" width="592" height="413" loading="lazy" decoding="async"
+                   alt="Scatter plot of nightly price for private rooms, entire homes or apartments, and shared rooms. Shared rooms stay under about $2,000; the other two types have rare listings near $10,000.">
+              <span class="figure-open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-expand"/></svg>Open full size<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+            <figcaption>Price by room type: shared rooms stay under about $2,000, while private rooms and entire homes have rare listings near $10,000.</figcaption>
+          </figure>
+
+          <figure class="figure">
+            <a class="figure-link" href="assets/charts/price-by-longitude.png" target="_blank" rel="noopener">
+              <img src="assets/charts/price-by-longitude.png" width="579" height="413" loading="lazy" decoding="async"
+                   alt="Scatter plot of nightly price against longitude, from -74.25 to -73.70. The highest prices cluster around longitude -74.0.">
+              <span class="figure-open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-expand"/></svg>Open full size<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+            <figcaption>Price by longitude (west to east): the most expensive listings sit near -74.0, which runs through Manhattan.</figcaption>
+          </figure>
+
+          <figure class="figure">
+            <a class="figure-link" href="assets/charts/correlation-matrix.png" target="_blank" rel="noopener">
+              <img src="assets/charts/correlation-matrix.png" width="1647" height="1170" loading="lazy" decoding="async"
+                   alt="Correlation matrix of the numeric columns. Price has weak correlations with every column; the strongest is longitude at -0.16.">
+              <span class="figure-open"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-expand"/></svg>Open full size<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+            <figcaption>Correlation matrix: no single number column is strongly linked to price (the strongest is longitude, -0.16), so borough and room type matter too.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 Model results (filled from data/model_results.json) -->
+    <section class="section" id="results" aria-labelledby="results-title">
+      <div class="container">
+        <div class="narrow">
+          <p class="section-number">05</p>
+          <h2 id="results-title">Model results</h2>
+          <p>Five models, compared in three stages: <strong>Original</strong> (my first notebook run), <strong>Bug fixes</strong> (the same settings on corrected data), and <strong>Tuned</strong> (new settings on the corrected data).</p>
+        </div>
+
+        <div id="results-loading" class="state-box" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Loading the results...</span>
+        </div>
+
+        <div id="results-error" class="state-box state-box--error" role="alert" hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-alert"/></svg>
+          <div>
+            <p>The results table could not be loaded. Please check your connection and try again.</p>
+            <button type="button" class="button button-secondary" id="results-retry">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-refresh"/></svg>
+              Try again
+            </button>
+          </div>
+        </div>
+
+        <div id="results-content" hidden>
+          <div class="results-layout">
+            <div class="card">
+              <h3 id="chart-title">R² by model and stage</h3>
+              <p class="card-sub">Higher is better. 1.0 would be a perfect fit; 0 is no better than guessing the average price.</p>
+              <ul class="legend" aria-hidden="true">
+                <li><span class="swatch bar-fill--original"></span>Original</li>
+                <li><span class="swatch bar-fill--fixed"></span>Bug fixes</li>
+                <li><span class="swatch bar-fill--tuned"></span>Tuned</li>
+              </ul>
+              <ul id="r2-chart" class="r2-chart" aria-labelledby="chart-title"></ul>
+            </div>
+
+            <div class="card">
+              <h3 id="table-title">Scores table</h3>
+              <div class="segmented" id="metric-switch" role="group" aria-label="Choose the metric to show">
+                <button type="button" data-metric="r2" aria-pressed="true">R²</button>
+                <button type="button" data-metric="mae" aria-pressed="false">MAE</button>
+                <button type="button" data-metric="rmse" aria-pressed="false">RMSE</button>
+                <button type="button" data-metric="all" aria-pressed="false">All</button>
+              </div>
+              <div class="table-scroll" id="results-table-wrap" tabindex="0" role="region" aria-labelledby="table-title"></div>
+              <p class="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span>All scores are on the <code>log1p(price)</code> scale, like in the notebook. MAE and RMSE are typical errors on that scale, not in dollars.</span></p>
+              <p class="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span id="mae-dollars-note"></span></p>
+              <p class="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span id="split-note">All scores come from the 30% test set that the models never saw during training.</span></p>
+            </div>
+          </div>
+
+          <div class="card changes">
+            <h3>What changed</h3>
+            <p>While preparing this page I re-read my notebook and found real problems. I fixed them before tuning, so the comparison is fair:</p>
+            <ul id="changes-list" class="tick-list"></ul>
+            <div id="r2-drops" class="drops"></div>
+            <details class="settings">
+              <summary>Model settings (original and tuned)</summary>
+              <ul id="params-list" class="params-list"></ul>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 Predictor -->
+    <section class="section section-alt" id="predictor" aria-labelledby="predictor-title">
+      <div class="container">
+        <div class="narrow">
+          <p class="section-number">06</p>
+          <div class="predictor-heading">
+            <h2 id="predictor-title">Try the price predictor</h2>
+            <p class="status-badge" id="api-status" data-state="waking" role="status">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-clock"/></svg>
+              <span>Waking up...</span>
+            </p>
+          </div>
+          <p>Describe a listing and the served model estimates its nightly price. The defaults describe a typical Manhattan home.</p>
+          <!-- Filled from served_model.reason in data/model_results.json. -->
+          <p class="note" id="predictor-served-note" hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg><span id="predictor-served-text"></span></p>
+        </div>
+
+        <div class="predictor-layout">
+          <form id="predict-form" class="card predict-form" novalidate>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="field-neighbourhood_group">Borough</label>
+                <select id="field-neighbourhood_group" name="neighbourhood_group" aria-describedby="error-neighbourhood_group">
+                  <option value="Bronx">Bronx</option>
+                  <option value="Brooklyn">Brooklyn</option>
+                  <option value="Manhattan" selected>Manhattan</option>
+                  <option value="Queens">Queens</option>
+                  <option value="Staten Island">Staten Island</option>
+                </select>
+                <p class="field-error" id="error-neighbourhood_group" hidden></p>
+              </div>
+
+              <div class="form-field">
+                <label for="field-room_type">Room type</label>
+                <select id="field-room_type" name="room_type" aria-describedby="error-room_type">
+                  <option value="Entire home/apt" selected>Entire home/apt</option>
+                  <option value="Private room">Private room</option>
+                  <option value="Shared room">Shared room</option>
+                </select>
+                <p class="field-error" id="error-room_type" hidden></p>
+              </div>
+
+              <div class="form-field">
+                <label for="field-minimum_nights">Minimum nights</label>
+                <input id="field-minimum_nights" name="minimum_nights" type="number" inputmode="numeric" min="1" max="365" step="1" value="2" required aria-describedby="help-minimum_nights error-minimum_nights">
+                <p class="field-help" id="help-minimum_nights">Shortest stay allowed, 1 to 365.</p>
+                <p class="field-error" id="error-minimum_nights" hidden></p>
+              </div>
+
+              <div class="form-field">
+                <label for="field-number_of_reviews">Number of reviews</label>
+                <input id="field-number_of_reviews" name="number_of_reviews" type="number" inputmode="numeric" min="0" max="700" step="1" value="9" required aria-describedby="help-number_of_reviews error-number_of_reviews">
+                <p class="field-help" id="help-number_of_reviews">0 to 700.</p>
+                <p class="field-error" id="error-number_of_reviews" hidden></p>
+              </div>
+
+              <div class="form-field">
+                <label for="field-calculated_host_listings_count">Host's listings</label>
+                <input id="field-calculated_host_listings_count" name="calculated_host_listings_count" type="number" inputmode="numeric" min="1" max="350" step="1" value="1" required aria-describedby="help-calculated_host_listings_count error-calculated_host_listings_count">
+                <p class="field-help" id="help-calculated_host_listings_count">How many listings the host has, 1 to 350.</p>
+                <p class="field-error" id="error-calculated_host_listings_count" hidden></p>
+              </div>
+
+              <div class="form-field">
+                <label for="field-availability_365">Availability (days per year)</label>
+                <input id="field-availability_365" name="availability_365" type="number" inputmode="numeric" min="0" max="365" step="1" value="55" required aria-describedby="help-availability_365 error-availability_365">
+                <p class="field-help" id="help-availability_365">Days open for booking, 0 to 365.</p>
+                <p class="field-error" id="error-availability_365" hidden></p>
+              </div>
+            </div>
+
+            <details class="advanced" id="advanced">
+              <summary>Advanced: exact location (optional)</summary>
+              <p class="field-help" id="help-location">Leave both empty to use the center of the chosen borough. Latitude 40.49 to 40.92, longitude -74.26 to -73.70.</p>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="field-latitude">Latitude</label>
+                  <input id="field-latitude" name="latitude" type="number" step="any" min="40.49" max="40.92" value="" aria-describedby="help-location error-latitude">
+                  <p class="field-error" id="error-latitude" hidden></p>
+                </div>
+                <div class="form-field">
+                  <label for="field-longitude">Longitude</label>
+                  <input id="field-longitude" name="longitude" type="number" step="any" min="-74.26" max="-73.70" value="" aria-describedby="help-location error-longitude">
+                  <p class="field-error" id="error-longitude" hidden></p>
+                </div>
+              </div>
+            </details>
+
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+
+            <button type="submit" class="button button-primary button-block" id="predict-button">
+              <span class="button-spinner spinner" aria-hidden="true"></span>
+              Predict
+            </button>
+          </form>
+
+          <div class="card result-panel" aria-live="polite">
+            <div id="predict-idle" class="result-state">
+              <p class="result-title">Your estimate will appear here</p>
+              <p>Fill in the details and press <strong>Predict</strong>.</p>
+            </div>
+
+            <div id="predict-loading" class="result-state" hidden>
+              <span class="spinner spinner-large" aria-hidden="true"></span>
+              <p class="result-title">Predicting the price...</p>
+              <p>If the server was asleep, this can take up to a minute.</p>
+            </div>
+
+            <div id="predict-result" class="result-state" hidden>
+              <p class="result-label">Estimated nightly price</p>
+              <p class="result-price"><span id="result-price" class="num">$0</span> per night</p>
+              <p class="result-range num" id="result-range" hidden></p>
+              <p class="result-details" id="result-details"></p>
+              <p class="result-honesty"><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-info"/></svg>Estimate based on 2019 NYC data</p>
+            </div>
+
+            <div id="predict-asleep" class="result-state result-state--asleep" hidden>
+              <svg class="icon icon-large" aria-hidden="true" focusable="false"><use href="#icon-moon"/></svg>
+              <p>The live predictor is asleep (free hosting). It usually wakes up in about a minute. Please try again.</p>
+              <button type="button" class="button button-secondary" id="predict-retry">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-refresh"/></svg>
+                Try again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 Limitations -->
+    <section class="section" id="limitations" aria-labelledby="limitations-title">
+      <div class="container narrow">
+        <p class="section-number">07</p>
+        <h2 id="limitations-title">Limitations</h2>
+        <ul class="tick-list tick-list--plain">
+          <li><strong>2019 prices.</strong> The data is a snapshot of New York listings from 2019. Prices today are different.</li>
+          <li><strong>Listed, not booked.</strong> The price is what hosts asked per night, not what guests paid.</li>
+          <li><strong>A rough estimate.</strong> The best R² is around 0.6, so the model explains part of the price, not all of it. Treat the result as a starting point.</li>
+          <li><strong>Missing details.</strong> Photos, size, amenities, and review text are not in the data, and they matter a lot.</li>
+          <li><strong>Free hosting.</strong> The live predictor sleeps when nobody uses it and needs about a minute to wake up.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 08 Author -->
+    <section class="section section-alt" id="author" aria-labelledby="author-title">
+      <div class="container narrow">
+        <p class="section-number">08</p>
+        <h2 id="author-title">About the author</h2>
+        <div class="author-card card">
+          <p class="author-name">Arif Al-Musharafi</p>
+          <p>Artificial Intelligence graduate interested in machine learning, computer vision, data science, and software development.</p>
+          <ul class="link-row">
+            <li>
+              <a class="button button-secondary" href="https://www.linkedin.com/in/arif-almishrafi-45612b2a7" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-linkedin"/></svg>
+                LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+            <li>
+              <a class="button button-secondary" href="https://github.com/arif-almusharafi" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-github"/></svg>
+                GitHub<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+            <li>
+              <a class="button button-secondary" href="https://github.com/arif-almusharafi/airbnb-price-analysis-and-prediction" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-external"/></svg>
+                Project repo<span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Built with Python, pandas, scikit-learn, FastAPI, and plain HTML, CSS, and JavaScript.</p>
+      <p>Data: the public AB_NYC_2019 dataset. No cookies, no analytics, and no visitor data is stored.</p>
+      <p>&copy; <span id="year">2026</span> Arif Al-Musharafi</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/validate.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/results-logic.js"></script>
+  <script src="js/dom.js"></script>
+  <script src="js/results-view.js"></script>
+  <script src="js/predictor.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

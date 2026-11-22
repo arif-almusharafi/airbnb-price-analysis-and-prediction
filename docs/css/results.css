@@ -1,0 +1,425 @@
+/* The "Model results" section: R² bar chart, metric switch, table, and notes. */
+
+.results-layout {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .results-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.card-sub {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Legend ---------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 3px;
+}
+
+/* ---------- R² chart (each bar has its stage name and value as text) ---------- */
+
+.r2-chart {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chart-group {
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.chart-model {
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+/* Phone: name and value on one line, bar below. */
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label value"
+    "track track";
+  align-items: center;
+  column-gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.bar-label {
+  grid-area: label;
+  color: var(--color-text-muted);
+}
+
+.bar-value {
+  grid-area: value;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bar-track {
+  grid-area: track;
+  display: block;
+  height: 0.75rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* The bar width is set with scaleX() from JavaScript (0 to 1). */
+.bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  border-radius: 999px;
+}
+
+.bar-fill--original {
+  background: var(--color-stage-original);
+}
+
+/* Stripes help tell the middle stage apart without color. */
+.bar-fill--fixed {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--color-stage-fixed) 0 4px,
+    color-mix(in srgb, var(--color-stage-fixed) 70%, transparent) 4px 7px
+  );
+}
+
+.bar-fill--tuned {
+  background: var(--color-stage-tuned);
+}
+
+@media (min-width: 600px) {
+  .bar-row {
+    grid-template-columns: 5.5rem minmax(0, 1fr) 9.5rem;
+    grid-template-areas: "label track value";
+  }
+}
+
+/* ---------- Pending and "Best" markers ---------- */
+
+.pending {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.badge-best {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-best {
+    color: var(--color-accent);
+  }
+}
+
+.badge-best .icon {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+/* ---------- Metric switch ---------- */
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.segmented button {
+  flex: 1 1 0;
+  min-width: 3.5rem;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  /* No color transition here: the chosen state switches at once, so text never fades out mid-change. */
+}
+
+.segmented button:hover {
+  background: var(--color-surface-alt);
+}
+
+/* The chosen metric: filled, plus a pressed state for screen readers. */
+.segmented button[aria-pressed="true"] {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* ---------- Table ---------- */
+
+/* Wide tables scroll inside this box, never the whole page. */
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.results-table caption {
+  caption-side: top;
+  text-align: start;
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.results-table th,
+.results-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: start;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.results-table thead th {
+  background: var(--color-surface-alt);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.results-table tbody tr:last-child th,
+.results-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.results-table tbody th {
+  font-weight: 600;
+}
+
+/* Phone: tighter cells and wrapping headers, so the one-metric table fits 360 px. */
+@media (max-width: 599px) {
+  .results-table th,
+  .results-table td {
+    padding: var(--space-3) var(--space-2);
+  }
+  .results-table thead th {
+    white-space: normal;
+  }
+  .results-table caption {
+    padding-inline: var(--space-2);
+  }
+  .card {
+    padding: var(--space-4);
+  }
+
+  /* One-metric table on a phone (QA-1): each model is a block with its name on top,
+     then Original, Bug fixes, and Tuned side by side, each with its stage name above it.
+     So all 3 stages fit 360 px with no sideways swipe. The "All" table still scrolls. */
+  .results-table:not(.results-table--all),
+  .results-table:not(.results-table--all) tbody {
+    display: block;
+  }
+  .results-table:not(.results-table--all) caption {
+    display: block;
+  }
+  .results-table:not(.results-table--all) thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .results-table:not(.results-table--all) tbody tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: 1px solid var(--color-border);
+  }
+  .results-table:not(.results-table--all) tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .results-table:not(.results-table--all) tbody th {
+    grid-column: 1 / -1;
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .results-table:not(.results-table--all) tbody td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    border-bottom: 0;
+    text-align: start;
+    white-space: normal;
+  }
+  .results-table:not(.results-table--all) tbody td::before {
+    content: attr(data-label);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+  .results-table:not(.results-table--all) .num-col .badge-best {
+    margin-inline-start: 0;
+  }
+}
+
+.results-table .num-col {
+  text-align: end;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.results-table .num-col .badge-best {
+  margin-inline-start: var(--space-2);
+}
+
+.results-table .group-start {
+  border-inline-start: 1px solid var(--color-border);
+}
+
+.results-table--all thead th[scope="colgroup"] {
+  text-align: center;
+}
+
+.results-table tr.is-best {
+  background: color-mix(in srgb, var(--color-accent-soft) 55%, transparent);
+}
+
+/* ---------- Notes and "What changed" ---------- */
+
+.note {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.note .icon {
+  margin-top: 0.15em;
+  vertical-align: 0;
+}
+
+.changes {
+  margin-top: var(--space-5);
+}
+
+.drops {
+  padding: var(--space-4);
+  border-inline-start: 4px solid var(--color-warning);
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-sm);
+}
+
+.drops p:last-child,
+.drops ul {
+  margin-bottom: 0;
+}
+
+.settings {
+  margin-top: var(--space-5);
+}
+
+.settings summary,
+.advanced summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.settings summary::-webkit-details-marker,
+.advanced summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Our own arrow (a small chevron), turned down when open. */
+.settings summary::before,
+.advanced summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.settings[open] summary::before,
+.advanced[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.params-list {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.params-list li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
+}
+
+.params-list strong {
+  font-family: var(--font-body);
+}

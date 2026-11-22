@@ -1,0 +1,155 @@
+{
+  "target": "log1p(price)",
+  "split": {
+    "test_size": 0.3,
+    "random_state": 42,
+    "train_rows": 27164,
+    "test_rows": 11642
+  },
+  "fixes": [
+    "Outlier filter now uses the row index: 15 extreme rows removed (38,821 to 38,806 rows).",
+    "Listing id removed from the model features.",
+    "RMSE computed with np.sqrt(mean_squared_error(...)) for newer scikit-learn."
+  ],
+  "models": [
+    {
+      "name": "LinearRegression",
+      "label": "Linear Regression",
+      "original": {
+        "params": {},
+        "mae": 0.338,
+        "rmse": 0.455,
+        "r2": 0.527
+      },
+      "fixed": {
+        "params": {},
+        "mae": 0.342,
+        "rmse": 0.464,
+        "r2": 0.516
+      },
+      "tuned": {
+        "params": {},
+        "mae": 0.342,
+        "rmse": 0.464,
+        "r2": 0.516
+      }
+    },
+    {
+      "name": "RandomForestRegressor",
+      "label": "Random Forest",
+      "original": {
+        "params": {},
+        "mae": 0.293,
+        "rmse": 0.405,
+        "r2": 0.625
+      },
+      "fixed": {
+        "params": {},
+        "mae": 0.301,
+        "rmse": 0.414,
+        "r2": 0.614
+      },
+      "tuned": {
+        "params": {
+          "n_estimators": 300,
+          "min_samples_leaf": 2,
+          "max_features": 0.33,
+          "random_state": 42
+        },
+        "mae": 0.294,
+        "rmse": 0.407,
+        "r2": 0.628
+      }
+    },
+    {
+      "name": "KNeighborsRegressor",
+      "label": "K-Nearest Neighbors",
+      "original": {
+        "params": {
+          "n_neighbors": 15
+        },
+        "mae": 0.53,
+        "rmse": 0.672,
+        "r2": -0.033
+      },
+      "fixed": {
+        "params": {
+          "n_neighbors": 15
+        },
+        "mae": 0.451,
+        "rmse": 0.592,
+        "r2": 0.212
+      },
+      "tuned": {
+        "params": {
+          "n_neighbors": 40,
+          "weights": "distance",
+          "scaled": true
+        },
+        "mae": 0.307,
+        "rmse": 0.421,
+        "r2": 0.602
+      }
+    },
+    {
+      "name": "GradientBoostingRegressor",
+      "label": "Gradient Boosting",
+      "original": {
+        "params": {},
+        "mae": 0.304,
+        "rmse": 0.415,
+        "r2": 0.606
+      },
+      "fixed": {
+        "params": {},
+        "mae": 0.307,
+        "rmse": 0.422,
+        "r2": 0.6
+      },
+      "tuned": {
+        "params": {
+          "n_estimators": 300,
+          "learning_rate": 0.05,
+          "max_depth": 5,
+          "random_state": 42
+        },
+        "mae": 0.298,
+        "rmse": 0.412,
+        "r2": 0.62
+      }
+    },
+    {
+      "name": "SVR",
+      "label": "SVR",
+      "original": {
+        "params": {},
+        "mae": 0.522,
+        "rmse": 0.658,
+        "r2": 0.01
+      },
+      "fixed": {
+        "params": {},
+        "mae": 0.424,
+        "rmse": 0.565,
+        "r2": 0.284
+      },
+      "tuned": {
+        "params": {
+          "C": 10,
+          "epsilon": 0.2,
+          "scaled": true
+        },
+        "mae": 0.305,
+        "rmse": 0.425,
+        "r2": 0.595
+      }
+    }
+  ],
+  "served_model": {
+    "name": "GradientBoostingRegressor",
+    "mae_log": 0.298,
+    "mae_dollars": 48,
+    "fallback_used": true,
+    "reason": "The live predictor uses Gradient Boosting (R\u00b2 0.620). Random Forest scores slightly higher (R\u00b2 0.628), but it needs about 480 MB of memory, and the much smaller Gradient Boosting model fits free hosting (512 MB)."
+  }
+}

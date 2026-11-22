@@ -1,0 +1,16 @@
+# Local Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Secrets (.env.example is fine to commit)
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3

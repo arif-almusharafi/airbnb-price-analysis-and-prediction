@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Phone width check (360, 768 px)</title>
+  <style>
+    body { margin: 16px; font-family: system-ui, sans-serif; background: #ccc; }
+    .row { display: flex; gap: 24px; align-items: flex-start; }
+    iframe { border: 1px solid #333; background: #fff; height: 9000px; }
+  </style>
+</head>
+<body>
+  <!-- Open http://127.0.0.1:5200/tests/phone-frame.html to see the page at phone and tablet widths. -->
+  <div class="row">
+    <iframe title="Page at 360 px" src="../index.html" width="360"></iframe>
+    <iframe title="Page at 768 px" src="../index.html" width="768"></iframe>
+  </div>
+</body>
+</html>
