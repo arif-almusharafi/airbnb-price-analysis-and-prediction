@@ -1,0 +1,7 @@
+# What the API needs. scikit-learn must match the version that saved the model file.
+fastapi==0.165.0
+uvicorn==0.54.0
+scikit-learn==1.9.1
+pandas==3.1.1
+numpy==2.5.5
+joblib==1.6.0
