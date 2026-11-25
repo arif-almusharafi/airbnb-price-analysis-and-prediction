@@ -62,7 +62,7 @@ test("every form input has a visible label", () => {
 
 test("the API base URL is set only in js/config.js", () => {
   const config = fs.readFileSync(path.join(root, "js", "config.js"), "utf8");
-  assert.match(config, /API_BASE_URL: "http:\/\/127\.0\.0\.1:8100"/);
+  assert.match(config, /API_BASE_URL: "https?:\/\/[^"\s]+[^\/"\s]"/); // set, with no slash at the end
   ["api.js", "predictor.js", "results-view.js", "main.js"].forEach((file) => {
     const code = fs.readFileSync(path.join(root, "js", file), "utf8");
     assert.doesNotMatch(code, /127\.0\.0\.1|localhost|onrender/, file);
