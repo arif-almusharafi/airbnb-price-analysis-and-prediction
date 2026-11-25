@@ -4,8 +4,8 @@ An end-to-end data science project that analyzes New York City Airbnb listings a
 
 ## Live Demo
 
-- **Project page:** https://arif-almusharafi.github.io/airbnb-price-analysis-and-prediction/
-- **Price prediction API:** `https://<your-render-service>.onrender.com/api/health` (placeholder, set after deploying)
+- **Project page:** https://arif-almusharafi.github.io/airbnb-price-analysis-and-prediction/ (GitHub Pages, served from the `docs/` folder)
+- **Price prediction API:** the URL is added here after the API is deployed on Render. Steps are in [backend/README.md](backend/README.md).
 
 The project page explains the work and has a live price predictor. The API runs on a free server that sleeps when idle, so the first prediction can take about a minute.
 
